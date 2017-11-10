@@ -1,0 +1,11 @@
+{
+    "region": "us-east-1",
+    "serviceName": "face-pi",
+    "threshold": 95,
+    "slack": {
+        "APIToken": "xxxx-xxxxxxxxxxx-xxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "channel": "facebot",
+        "emoji": ":chains:",
+        "username": "Face Lock"
+    }
+}
