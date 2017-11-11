@@ -140,7 +140,7 @@ const failure = (picPath) => {
             
             inProgress = false;
 
-            return slackWebClient.uploadImage(channel, 'Intruder', picPath)
+            return slackWebClient.uploadImage(channel, 'Intruder', fs.createReadStream(picPath))
             .then(() => {
                 return res;
             });
