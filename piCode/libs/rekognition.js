@@ -2,72 +2,74 @@
 
 const AWS = require('aws-sdk');
 
-class Rekognition {}
 
-Rekognition.constructor = (region, threshold) => {
-    this.threshold = threshold;
-    this.rekognition = new AWS.Rekognition({
-        region: region
-    });
-};
+class Rekognition {
 
-Rekognition.getMatchedCollections = (prefix) => {
-
-    return this.getCollections()
-        .then((callCollections) => {
-            return callCollections.filter((val) => {
-                return val.indexOf(prefix) != 0;
-            });
+    constructor(region, threshold) {
+        this.threshold = threshold;
+        this.rekognition = new AWS.Rekognition({
+            region: region
         });
-
-};
-
-Rekognition.getCollections = (nextToken, collections) => {
-    
-    const params = {
-        NextToken: nextToken || null
-    };
-
-    if(!collections) {
-        collections = [];
     }
 
-    return this.rekognition.listCollections(params)
-        .promise()
-        .then((result) => {
+    getMatchedCollections(prefix) {
 
-            collections = collections.concat(result.CollectionIds);
+        return this.getCollections()
+            .then((callCollections) => {
+                return callCollections.filter((val) => {
+                    return val.indexOf(prefix) != 0;
+                });
+            });
 
-            if(result.NextToken) {
-                return this.getCollections(result.NextToken, collections);
-            } else {
-                return collections;
-            }
+    }
 
-        });
-};
+    getCollections(nextToken, collections) {
+        
+        const params = {
+            NextToken: nextToken || null
+        };
 
-Rekognition.faceMatch = (collectionId, pictureBuffer) => {
+        if(!collections) {
+            collections = [];
+        }
 
-    const params = {
-        CollectionId: collectionId,
-        Image: {
-            Bytes: pictureBuffer
-        },
-        FaceMatchThreshold: this.threshold,
-        MaxFaces: 1
+        return this.rekognition.listCollections(params)
+            .promise()
+            .then((result) => {
+
+                collections = collections.concat(result.CollectionIds);
+
+                if(result.NextToken) {
+                    return this.getCollections(result.NextToken, collections);
+                } else {
+                    return collections;
+                }
+
+            });
     };
-    
 
-    return this.rekognition.searchFacesByImage(params)
-        .promise()
-        .then((face)=> {
-            if(face && face.FaceMatches && face.FaceMatches.length > 0 && face.FaceMatches[0].Face.Confidence >= 95) {
-                return collectionId;
-            } else {
-                return null;
-            }
-        });
-};
+    faceMatch(collectionId, pictureBuffer) {
 
-exports.Rekognition = Rekognition;
+        const params = {
+            CollectionId: collectionId,
+            Image: {
+                Bytes: pictureBuffer
+            },
+            FaceMatchThreshold: this.threshold,
+            MaxFaces: 1
+        };
+        
+
+        return this.rekognition.searchFacesByImage(params)
+            .promise()
+            .then((face)=> {
+                if(face && face.FaceMatches && face.FaceMatches.length > 0 && face.FaceMatches[0].Face.Confidence >= 95) {
+                    return collectionId;
+                } else {
+                    return null;
+                }
+            });
+    };
+}
+
+module.exports = Rekognition;
