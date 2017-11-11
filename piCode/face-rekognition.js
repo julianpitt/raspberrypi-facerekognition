@@ -12,7 +12,7 @@ const Rekognition = require('./libs/rekognition');
 
 // Configuration
 const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'config.json')));
-const token = process.env.SLACK_API_TOKEN || config.slac.APIToken;
+const token = process.env.SLACK_API_TOKEN || config.slack.APIToken;
 const channel = process.env.SLACK_CHANNEL || config.slack.channel;
 const emoji = process.env.SLACK_EMOJI || config.slack.emoji;
 const username = process.env.SLACK_USERNAME || config.slack.username;
