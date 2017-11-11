@@ -53,7 +53,7 @@ const determineFace = BbPromise.coroutine(function*() {
 
     const picture = yield camera.takePhoto('intruder');
 
-    const availableCollections = yield getMatchedCollections(config.serviceName);
+    const availableCollections = yield rekognition.getMatchedCollections(config.serviceName);
 
     let found = null;
 
@@ -61,7 +61,7 @@ const determineFace = BbPromise.coroutine(function*() {
 
         console.log(`Checking collection ${collectionId}`);
 
-        const faceCollection = recognitionService.matchFace(collectionId, pictureBuffer)
+        const faceCollection = rekognition.matchFace(collectionId, pictureBuffer)
             .catch((error) => {
                 console.error(error);
                 return failure();
