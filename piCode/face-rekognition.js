@@ -61,7 +61,7 @@ const determineFace = BbPromise.coroutine(function*() {
 
         console.log(`Checking collection ${collectionId}`);
 
-        const faceCollectionId = rekognition.matchFace(collectionId, pictureBuffer)
+        const faceCollectionId = rekognition.faceMatch(collectionId, pictureBuffer)
             .catch((error) => {
                 console.error(error);
                 return failure();
