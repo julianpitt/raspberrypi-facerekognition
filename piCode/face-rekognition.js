@@ -62,12 +62,13 @@ const determineFace = BbPromise.coroutine(function*() {
         return rekognition.faceMatch(collectionId, pictureBuffer)
             .catch((error) => {
                 console.error(error);
-                return failure();
+                return false;
             });
         
     }).then((mappedResults) => {
 
         return mappedResults.reduce((accum, faceCollectionId) => {
+
             if(faceCollectionId) {
                 accum = faceCollectionId;
             }
@@ -76,7 +77,7 @@ const determineFace = BbPromise.coroutine(function*() {
 
     });
 
-    if(found) {
+    if(found !== null) {
         return success(found);
     } else {
         return failure(path.resolve(__dirname, './photos/intruder.jpg'));
@@ -111,12 +112,16 @@ const success = (collectionId) => {
     
     return writeDelay(green_led, 3000, 0)
         .then((res) => {
+            
             inProgress = false;
-            slackWebClient.log(channel, 'Successfull login attempt from '+collectionId, {
+
+            return slackWebClient.log(channel, 'Successfull login attempt from '+collectionId, {
                 username: username,
                 icon_emoji: emoji
+            }).then(() => {
+                return res;
             });
-            return res;
+            
         });
 
 };
@@ -130,11 +135,15 @@ const failure = (picPath) => {
     
     return writeDelay(red_led, 3000, 0)
         .then((res) => {
+            
             inProgress = false;
-            slackWebClient.log(channel, 'Intruder', {
+
+            return slackWebClient.log(channel, 'Intruder', {
                 attachment: picPath
+            }).then(() => {
+                return res;
             });
-            return res;
+
         });
     
 };
