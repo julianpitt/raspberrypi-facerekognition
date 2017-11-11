@@ -115,13 +115,15 @@ const success = (collectionId) => {
             
             inProgress = false;
 
-            return slackWebClient.log(channel, 'Successfull login attempt from '+collectionId, {
-                username: username,
-                icon_emoji: emoji
-            }).then(() => {
+            return slackWebClient.sendMessage(
+                channel, 
+                `Successfull login attempt from ${collectionId}`,
+                username,
+                emoji
+            ).then(() => {
                 return res;
             });
-            
+
         });
 
 };
@@ -138,9 +140,8 @@ const failure = (picPath) => {
             
             inProgress = false;
 
-            return slackWebClient.log(channel, 'Intruder', {
-                attachment: picPath
-            }).then(() => {
+            return slackWebClient.uploadImage(channel, 'Intruder', picPath)
+            .then(() => {
                 return res;
             });
 

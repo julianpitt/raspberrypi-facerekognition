@@ -1,8 +1,6 @@
 'use strict';
 
 const WebClient = require('@slack/client').WebClient;
-const BbPromise = require('bluebird');
-const fs = require('fs');
 
 class SlackWebClient {
 
@@ -11,7 +9,7 @@ class SlackWebClient {
     }
 
     uploadImage(channel, fileName, fileStream) {
-        return new BbPromise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.webclient.files.upload(fileName, {
                     file: fileStream,
                     channels: channel
@@ -23,7 +21,7 @@ class SlackWebClient {
     }
 
     sendMessage(channel, message, username, icon_emoji) {
-        return new BbPromise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
             const opts = {
                 icon_emoji,
@@ -38,17 +36,6 @@ class SlackWebClient {
     }
 
 }
-
-SlackWebClient.log = BbPromise.coroutine(function* (channel, message, opts) {
-    
-    if(opts.attachment) {
-        yield this.uploadImage(channel, message, fs.createReadStream(opts.attachment));
-    } else {
-        yield this.sendMessage(channel, message, opts.username, opts.icon_emoji);
-    }   
-
-});
-
 
 
 module.exports = SlackWebClient;
