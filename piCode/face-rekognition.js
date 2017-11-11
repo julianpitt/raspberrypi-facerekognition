@@ -54,23 +54,27 @@ const determineFace = BbPromise.coroutine(function*() {
 
     const pictureBuffer = yield camera.takePhoto('intruder');
     const availableCollections = yield rekognition.getMatchedCollections(servicePrefix);
-    let found = null;
 
-    yield BbPromise.mapSeries(availableCollections, (collectionId) => {
+    const found = yield BbPromise.mapSeries(availableCollections, (collectionId) => {
 
         console.log(`Checking collection ${collectionId}`);
 
-        const faceCollectionId = rekognition.faceMatch(collectionId, pictureBuffer)
+        return rekognition.faceMatch(collectionId, pictureBuffer)
             .catch((error) => {
                 console.error(error);
                 return failure();
             });
-
-        if(faceCollectionId) {
-            found = faceCollectionId;
-        }
         
-    })
+    }).then((mappedResults) => {
+
+        return mappedResults.reduce((accum, faceCollectionId) => {
+            if(faceCollectionId) {
+                accum = faceCollectionId;
+            }
+            return accum;
+        }, null);
+
+    });
 
     if(found) {
         return success(found);
