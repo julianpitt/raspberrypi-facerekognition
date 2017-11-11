@@ -17,7 +17,7 @@ class Rekognition {
         return this.getCollections()
             .then((callCollections) => {
                 return callCollections.filter((val) => {
-                    return val.indexOf(prefix) != 0;
+                    return val.indexOf(prefix) > -1;
                 });
             });
 

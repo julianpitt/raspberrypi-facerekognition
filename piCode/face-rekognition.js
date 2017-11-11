@@ -17,6 +17,7 @@ const channel = process.env.SLACK_CHANNEL || config.slack.channel;
 const emoji = process.env.SLACK_EMOJI || config.slack.emoji;
 const username = process.env.SLACK_USERNAME || config.slack.username;
 const threshold = config.threshold;
+const servicePrefix = config.servicePrefix;
 
 // Instantiations
 const camera = new Raspistill();
@@ -52,9 +53,7 @@ const determineFace = BbPromise.coroutine(function*() {
     BbPromise.delay(1000);
 
     const pictureBuffer = yield camera.takePhoto('intruder');
-
-    const availableCollections = yield rekognition.getMatchedCollections(config.serviceName);
-
+    const availableCollections = yield rekognition.getMatchedCollections(servicePrefix);
     let found = null;
 
     yield BbPromise.mapSeries(availableCollections, (collectionId) => {
