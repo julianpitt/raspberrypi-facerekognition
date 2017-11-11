@@ -37,18 +37,18 @@ class SlackWebClient {
         });
     }
 
-    log(channel, message, opts) {
-        return BbPromise.coroutine(function* (channel, message, opts) {
-        
-            if(opts.attachment) {
-                yield this.uploadImage(channel, message, fs.createReadStream(opts.attachment));
-            } else {
-                yield this.sendMessage(channel, message, opts.username, opts.icon_emoji);
-            }   
-
-        });
-    }
 }
+
+SlackWebClient.log = BbPromise.coroutine(function* (channel, message, opts) {
+    
+    if(opts.attachment) {
+        yield this.uploadImage(channel, message, fs.createReadStream(opts.attachment));
+    } else {
+        yield this.sendMessage(channel, message, opts.username, opts.icon_emoji);
+    }   
+
+});
+
 
 
 module.exports = SlackWebClient;
