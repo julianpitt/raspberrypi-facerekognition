@@ -51,7 +51,7 @@ const determineFace = BbPromise.coroutine(function*() {
     // Wait a second from pressing the button to take the picture
     BbPromise.delay(1000);
 
-    const picture = yield camera.takePhoto('intruder');
+    const pictureBuffer = yield camera.takePhoto('intruder');
 
     const availableCollections = yield rekognition.getMatchedCollections(config.serviceName);
 
@@ -61,7 +61,7 @@ const determineFace = BbPromise.coroutine(function*() {
 
         console.log(`Checking collection ${collectionId}`);
 
-        const faceCollection = rekognition.matchFace(collectionId, pictureBuffer)
+        const faceCollectionId = rekognition.matchFace(collectionId, pictureBuffer)
             .catch((error) => {
                 console.error(error);
                 return failure();
@@ -109,7 +109,10 @@ const success = (collectionId) => {
     return writeDelay(green_led, 3000, 0)
         .then((res) => {
             inProgress = false;
-            slack.log('Successfull login attempt from '+collectionId);
+            slackWebClient.log(channel, 'Successfull login attempt from '+collectionId, {
+                username: username,
+                icon_emoji: emoji
+            });
             return res;
         });
 
@@ -125,7 +128,9 @@ const failure = (picPath) => {
     return writeDelay(red_led, 3000, 0)
         .then((res) => {
             inProgress = false;
-            slack.log('Intruder', picPath);
+            slackWebClient.log(channel, 'Intruder', {
+                attachment: picPath
+            });
             return res;
         });
     

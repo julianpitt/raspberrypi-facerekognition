@@ -1,8 +1,9 @@
 extends:
   - eslint:recommended
+  - plugin:node/recommended
 plugins:
   - promise
-  - nodejs
+  - node
 
 rules:
   no-console: 0
