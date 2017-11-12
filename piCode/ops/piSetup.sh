@@ -35,6 +35,7 @@ rm -rf ./awsCode
 npm set progress=false
 
 cd ./piCode/recognition
+cp example.config.json config.json
 npm install
 
 cd ../ops
