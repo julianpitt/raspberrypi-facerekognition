@@ -1,0 +1,15 @@
+{
+  "name": "ops",
+  "version": "1.0.0",
+  "description": "",
+  "main": "piBootScript.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Julian Pittas <julian.pittas@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "is-online": "^7.0.0"
+  }
+}
