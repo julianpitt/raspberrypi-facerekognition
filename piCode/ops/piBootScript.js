@@ -1,14 +1,18 @@
 'use strict';
 
 const isOnline = require('is-online');
+const fs = require('fs');
+const path = require('path');
 const cp = require('child_process');
 const Gpio = require('onoff').Gpio;
+const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../recognition/config.json')));
+const Rekognition = require('../recognition/libs/rekognition');
 
 const red_led = new Gpio(23, 'out');
 const yellow_led = new Gpio(24, 'out');
 const green_led = new Gpio(25, 'out');
 const button = new Gpio(16, 'in', 'both');
-
+const rekognition = new Rekognition(config.region, config.threshold);
 
 
 const blink = (led) => {
@@ -19,10 +23,14 @@ const blink = (led) => {
 const delayedErrorExit = () => {
     setTimeout(() => {
         process.exit(1);
-    }, 60000); // exit in a minute
+    }, 30000); // exit in a minute
 };
 
-
+const setColours = (r,g,y) => {
+    red_led.writeSync(r);
+    green_led.writeSync(g);
+    yellow_led.writeSync(y);
+}
 
 let loading = setInterval(() => {
     blink(yellow_led);
@@ -31,24 +39,28 @@ let loading = setInterval(() => {
 return isOnline({ timeout: 300 })
     .then(online => {
 
-        clearInterval(loading);
-        yellow_led.writeSync(0);
-
         if(online) {
-            cp.fork('~/raspberrypi-facerekognition/piCode/recognition/face-rekognition.js');
+            return rekognition.getMatchedCollections(config.servicePrefix)
+                .then(() => {
+                    clearInterval(loading);
+                    setColours(0,0,0);
+                    cp.fork('~/raspberrypi-facerekognition/piCode/recognition/face-rekognition.js');
+                })
+                .catch((error) => {
+                    setColours(1,1,0);
+                    console.log(error);
+                    console.log('Please setup and configure your default aws profile');
+                    delayedErrorExit();
+                });
         } else {
-            red_led.writeSync(1);
-            yellow_led.writeSync(0);
-            green_led.writeSync(0);
+            setColours(1,0,1);
             console.log('Please connect to the internet then run `node ~/raspberrypi-facerekognition/piCode/recognition/face-rekognition.js`');
             delayedErrorExit();
         }
         
     })
     .catch((error) => {
-        red_led.writeSync(1);
-        yellow_led.writeSync(1);
-        green_led.writeSync(0);
+        setColours(1,0,0);
         console.log(message);
         delayedErrorExit();
     });
