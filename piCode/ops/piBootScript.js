@@ -22,6 +22,10 @@ const blink = (led) => {
 
 const delayedErrorExit = () => {
     setTimeout(() => {
+        setColours(0,0,0);
+        red_led.unexport();
+        yellow_led.unexport();
+        green_led.unexport();
         process.exit(1);
     }, 30000); // exit in a minute
 };
@@ -69,5 +73,4 @@ process.on('SIGINT', function () {
     red_led.unexport();
     yellow_led.unexport();
     green_led.unexport();
-    button.unexport();
 });

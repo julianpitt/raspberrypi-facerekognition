@@ -10,6 +10,7 @@
   "author": "Julian Pittas <julian.pittas@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "is-online": "^7.0.0"
+    "is-online": "^7.0.0",
+    "onoff": "^1.1.8"
   }
 }
